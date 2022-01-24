@@ -12,9 +12,22 @@ int usage(const char* program)
     return 1;
 }
 
-void do_random(int size, int range)
+void print_data_list(data_t** data, int size)
 {
     int i = 0;
+    for (i = 0; i < size; i++) {
+        data_t* item = data[i];
+        if (NULL == item) {
+            fprintf(stderr, "unexpected null data node at %d.\n", i);
+            return;
+        }
+
+        printf("%5d %d\n", i, item->value);
+    }
+}
+
+void do_random(int size, int range)
+{
     data_t** list = NULL;
     
     srand(time(NULL));
@@ -24,16 +37,7 @@ void do_random(int size, int range)
         return;
     }
 
-    for (i = 0; i < size; i++) {
-        data_t* data = list[i];
-        if (NULL == data) {
-            fprintf(stderr, "unexpected null data node.\n");
-            return;
-        }
-
-        printf("%5d %d\n", i, data->value);
-    }
-
+    print_data_list(list, size);
     data_list_free(list, size);
 }
 
@@ -41,7 +45,6 @@ void do_import()
 {
     data_t** list = NULL;
     int size = 100;
-    int i = 0;
 
     list = data_list_read(stdin, &size);
     if (NULL == list) {
@@ -49,16 +52,34 @@ void do_import()
         return;
     }
 
-    for (i = 0; i < size; i++) {
-        data_t* data = list[i];
-        if (NULL == data) {
-            fprintf(stderr, "unexpected null data node.\n");
-            return;
-        }
+    print_data_list(list, size);
+    data_list_free(list, size);
+}
 
-        printf("%5d %d\n", i, data->value);
+void do_test(const char* algo)
+{
+    data_t** list = NULL;
+    int size = 100;
+
+    list = data_list_random(size, 100);
+    if (NULL == list) {
+        fprintf(stderr, "generate random list failed\n");
+        return;
     }
 
+    sort_func sort = NULL;
+    if (!strcmp("selection", algo)) {
+        sort = sort_selection;
+    } else {
+        fprintf(stderr, "unknown sort algorithm: %s\n", algo);
+        return;
+    }
+
+    print_data_list(list, size);
+    printf("---------------- sorting by %s ----------------\n", algo);
+    sort(list, size);
+
+    print_data_list(list, size);
     data_list_free(list, size);
 }
 
@@ -86,6 +107,17 @@ int main(int argc, char* argv[])
 
     } else if (!strcmp(cmd, "import")) {
         do_import();
+
+    } else if (!strcmp(cmd, "test")) {
+        char* algo = NULL;
+        if (argc <= 2) {
+            printf("missing algorithm name\n");
+            usage(argv[0]);
+            return 0;
+        }
+
+        algo = argv[2];
+        do_test(algo);
 
     } else {
         usage(argv[0]);
