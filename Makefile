@@ -1,7 +1,7 @@
 CC=cc
 CFLAGS=-Wall -std=c89 -g
-ALGOS=selection.o insertion.o
 OBJS=main.o data.o
+ALGOS=selection.o insertion.o bubble.o
 PROJ=csortings
 
 $(PROJ): $(OBJS) $(ALGOS)

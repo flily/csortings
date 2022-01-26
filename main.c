@@ -73,6 +73,9 @@ void do_test(const char* algo, int size, int range)
     } else if (!strcmp("insertion", algo)) {
         sort = sort_insertion;
 
+    } else if (!strcmp("bubble", algo)) {
+        sort = sort_bubble;
+
     } else {
         fprintf(stderr, "unknown sort algorithm: %s\n", algo);
         return;
@@ -84,6 +87,52 @@ void do_test(const char* algo, int size, int range)
 
     print_data_list(list, size);
     data_list_free(list, size);
+}
+
+struct benchmark_info_s {
+    char* name;
+    sort_func sort;
+};
+
+void do_benchmark(int size, int range)
+{
+    int i = 0;
+    struct benchmark_info_s algos[] = {
+        { "selection", sort_selection },
+        { "insertion", sort_insertion },
+        { "bubble", sort_bubble },
+        // { "quick", sort_quick },
+        // { "merge", sort_merge },
+        // { "heap", sort_heap },
+        // { "shell", sort_shell },
+        { NULL, NULL },
+    };
+    data_t** list = NULL;
+    
+    list = data_list_random(size, range);
+    if (NULL == list) {
+        fprintf(stderr, "generate random list failed\n");
+        return;
+    }
+
+    for (i = 0; algos[i].name != NULL; i++) {
+        struct benchmark_info_s* info = &algos[i];
+        data_t** data = NULL;
+        clock_t clock_start, clock_end;
+
+        data = data_list_duplicate(list, size);
+        if (NULL == data) {
+            fprintf(stderr, "duplicate data list failed\n");
+            return;
+        }
+
+        clock_start = clock();
+        info->sort(data, size);
+        clock_end = clock();
+
+        data_list_free(data, size);
+        printf("%s  \t\t%p    %ld\n", info->name, info->sort, clock_end - clock_start);
+    }
 }
 
 int main(int argc, char* argv[])
@@ -125,12 +174,24 @@ int main(int argc, char* argv[])
         algo = argv[2];
         if (argc > 3) {
             size = atoi(argv[3]);
-            if (argc > 3) {
+            if (argc > 4) {
                 range = atoi(argv[4]);
             }
         }
         printf("algo: %s, size: %d, range: %d\n", algo, size, range);
         do_test(algo, size, range);
+
+    } else if (!strcmp(cmd, "benchmark")) {
+        int size = 10000;
+        int range = 100000;
+
+        if (argc > 2) {
+            size = atoi(argv[2]);
+            if (argc > 3) {
+                range = atoi(argv[3]);
+            }
+        }
+        do_benchmark(size, range);
 
     } else {
         usage(argv[0]);

@@ -24,6 +24,8 @@ data_t* data_parse(const char* s);
 
 data_t** data_list_random(int size, int range);
 
+data_t** data_list_duplicate(data_t** data, int size);
+
 void data_list_free(data_t** list, int size);
 
 data_t** data_list_read(FILE* fd, int* size);

@@ -78,6 +78,37 @@ data_t** data_list_random(int size, int range)
     return NULL;
 }
 
+data_t** data_list_duplicate(data_t** list, int size)
+{
+    int i = 0;
+    data_t** new_list = NULL;
+    size_t new_list_size = sizeof(data_t*) * size;
+
+    if (NULL == list || size <= 0) {
+        return NULL;
+    }
+
+    new_list = malloc(new_list_size);
+    if (NULL == new_list) {
+        return NULL;
+    }
+
+    memset(new_list, 0, new_list_size);
+    for (i = 0; i < size; ++i) {
+        new_list[i] = data_create(list[i]->value);
+        if (NULL == new_list[i]) {
+            break;
+        }
+    }
+
+    if (i < size) {
+        data_list_free(new_list, size);
+        new_list = NULL;
+    }
+
+    return new_list;
+}
+
 void data_list_free(data_t** list, int size)
 {
     int i = 0;
