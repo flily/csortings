@@ -56,12 +56,11 @@ void do_import()
     data_list_free(list, size);
 }
 
-void do_test(const char* algo)
+void do_test(const char* algo, int size, int range)
 {
     data_t** list = NULL;
-    int size = 100;
 
-    list = data_list_random(size, 100);
+    list = data_list_random(size, range);
     if (NULL == list) {
         fprintf(stderr, "generate random list failed\n");
         return;
@@ -70,6 +69,10 @@ void do_test(const char* algo)
     sort_func sort = NULL;
     if (!strcmp("selection", algo)) {
         sort = sort_selection;
+    
+    } else if (!strcmp("insertion", algo)) {
+        sort = sort_insertion;
+
     } else {
         fprintf(stderr, "unknown sort algorithm: %s\n", algo);
         return;
@@ -110,6 +113,9 @@ int main(int argc, char* argv[])
 
     } else if (!strcmp(cmd, "test")) {
         char* algo = NULL;
+        int size = 100;
+        int range = 1000;
+
         if (argc <= 2) {
             printf("missing algorithm name\n");
             usage(argv[0]);
@@ -117,7 +123,14 @@ int main(int argc, char* argv[])
         }
 
         algo = argv[2];
-        do_test(algo);
+        if (argc > 3) {
+            size = atoi(argv[3]);
+            if (argc > 3) {
+                range = atoi(argv[4]);
+            }
+        }
+        printf("algo: %s, size: %d, range: %d\n", algo, size, range);
+        do_test(algo, size, range);
 
     } else {
         usage(argv[0]);

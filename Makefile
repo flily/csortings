@@ -1,11 +1,11 @@
 CC=cc
 CFLAGS=-Wall -std=c89 -g
-ALGOS=selection.o
+ALGOS=selection.o insertion.o
 OBJS=main.o data.o
 PROJ=csortings
 
 $(PROJ): $(OBJS) $(ALGOS)
-	$(CC) -o $@ $(OBJS) $(ALGOS)
+	$(CC) -g -o $@ $(OBJS) $(ALGOS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -13,4 +13,4 @@ $(PROJ): $(OBJS) $(ALGOS)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJS) $(PROJ)
+	rm -f $(PROJ) $(OBJS) $(ALGOS)
