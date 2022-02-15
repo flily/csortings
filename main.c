@@ -76,6 +76,12 @@ void do_test(const char* algo, int size, int range)
     } else if (!strcmp("bubble", algo)) {
         sort = sort_bubble;
 
+    } else if (!strcmp("qsort", algo)) {
+        sort = sort_qsort;
+
+    } else if (!strcmp("quick", algo)) {
+        sort = sort_quick;
+
     } else {
         fprintf(stderr, "unknown sort algorithm: %s\n", algo);
         return;
@@ -101,10 +107,8 @@ void do_benchmark(int size, int range)
         { "selection", sort_selection },
         { "insertion", sort_insertion },
         { "bubble", sort_bubble },
-        // { "quick", sort_quick },
-        // { "merge", sort_merge },
-        // { "heap", sort_heap },
-        // { "shell", sort_shell },
+        { "qsort", sort_qsort },
+        { "quick", sort_quick },
         { NULL, NULL },
     };
     data_t** list = NULL;
@@ -115,6 +119,8 @@ void do_benchmark(int size, int range)
         return;
     }
 
+    printf("size: %d, range: %d\n", size, range);
+    printf("---------------- benchmark ----------------\n");
     for (i = 0; algos[i].name != NULL; i++) {
         struct benchmark_info_s* info = &algos[i];
         data_t** data = NULL;
@@ -131,7 +137,9 @@ void do_benchmark(int size, int range)
         clock_end = clock();
 
         data_list_free(data, size);
-        printf("%s  \t\t%p    %ld\n", info->name, info->sort, clock_end - clock_start);
+        printf("%-20s  \t\t    %ld\n",
+            info->name,
+            clock_end - clock_start);
     }
 }
 

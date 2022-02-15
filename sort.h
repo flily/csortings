@@ -15,6 +15,8 @@ int sort_insertion(data_t** data, int size);
 
 int sort_bubble(data_t** data, int size);
 
+int sort_qsort(data_t** data, int size);
+
 int sort_quick(data_t** data, int size);
 
 int sort_merge(data_t** data, int size);
