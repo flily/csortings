@@ -37,7 +37,7 @@ int quick_partition(data_t** data, int lo, int hi)
 
     while (1) {
         for (; i < hi && data[i]->value <= v->value; i++);
-        for (; j > lo && data[j]->value >= v->value; j--);
+        for (; j > lo && data[j]->value > v->value; j--);
         if (i >= j) {
             break;
         }
