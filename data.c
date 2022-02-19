@@ -1,8 +1,8 @@
 #include "data.h"
 
 #include <string.h>
-
-
+#include <stdlib.h>
+#include <time.h>
 
 data_t* data_create(int value)
 {
@@ -51,6 +51,7 @@ data_t** data_list_random(int size, int range)
 
     memset(list, 0, list_size);
 
+    srand(time(NULL));
     do {
         int success = 0;
         for (i = 0; i < size; ++i) {
@@ -173,4 +174,52 @@ data_t** data_list_read(FILE* fd, int* size)
 
     data_list_free(list, length);
     return NULL;
+}
+
+int data_list_sorted(data_t** list, int size)
+{
+    int i = 0, v = 0;
+    if (NULL == list || size <= 1) {
+        return 0;
+    }
+
+    v = list[0]->value - list[1]->value;
+    for (i = 1; i < size - 1; i++) {
+        int t = list[i]->value - list[i + 1]->value;
+        if (t * v < 0) {
+            return 0;
+        }
+    }
+
+    if (v > 0) {
+        return 1;
+    } else {
+        return -1;
+    }
+}
+
+void data_list_print(data_t** data, int size)
+{
+    int i = 0;
+    for (i = 0; i < size; i++) {
+        data_t* item = data[i];
+        if (NULL == item) {
+            fprintf(stderr, "unexpected null data node at %d.\n", i);
+            return;
+        }
+
+        printf("%5d %d\n", i, item->value);
+    }
+}
+
+void data_list_swap(data_t** data, int i, int j)
+{
+    data_t* t = NULL;
+    if (NULL == data || i < 0 || j < 0) {
+        return;
+    }
+
+    t = data[i];
+    data[i] = data[j];
+    data[j] = t;
 }

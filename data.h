@@ -30,6 +30,12 @@ void data_list_free(data_t** list, int size);
 
 data_t** data_list_read(FILE* fd, int* size);
 
+int data_list_sorted(data_t** data, int size);
+
+void data_list_print(data_t** data, int size);
+
+void data_list_swap(data_t** data, int i, int j);
+
 #ifdef __cplusplus
 }
 #endif

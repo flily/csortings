@@ -32,37 +32,33 @@ int sort_qsort(data_t** data, int size)
 static
 int quick_partition(data_t** data, int lo, int hi)
 {
-    int i = lo, j = hi + 1;
+    int i = lo + 1, j = hi;
     data_t* v = data[lo];
 
     while (1) {
-        while (data[++i]->value < v->value && i < hi);
-        while (data[--j]->value > v->value && j > lo);
-
+        for (; i < hi && data[i]->value <= v->value; i++);
+        for (; j > lo && data[j]->value >= v->value; j--);
         if (i >= j) {
             break;
         }
 
-        data_t* t = data[i];
-        data[i] = data[j];
-        data[j] = t;
+        data_list_swap(data, i, j);
     }
 
-    data_t* t = data[lo];
-    data[lo] = data[j];
-    data[j] = t;
-
+    data_list_swap(data, lo, j);
     return j;
 }
 
 static
 int quick_sort(data_t** data, int lo, int hi)
 {
+    int j = 0;
+
     if (lo >= hi) {
         return 0;
     }
 
-    int j = quick_partition(data, lo, hi);
+    j = quick_partition(data, lo, hi);
     quick_sort(data, lo, j - 1);
     quick_sort(data, j + 1, hi);
 
